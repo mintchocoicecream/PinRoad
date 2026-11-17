@@ -3,11 +3,19 @@ import { Sidebar } from './components/layout/Sidebar';
 import { TravelMap } from './features/map/TravelMap';
 import { useSettingsStore } from './store/useSettingsStore';
 import { SettingsView } from './features/settings/SettingsView';
+import { useAuthStore } from './store/useAuthStore';
 
 export default function App() {
+  const { initializeAuth } = useAuthStore();
   const [currentTab, setCurrentTab] = useState('map');
   const { isSidebarPinned } = useSettingsStore();
   const [isHovered, setIsHovered] = useState(false);
+
+  // 💡 앱 마운트 시 Supabase 인증 상태 초기화 및 세션 감지 리스너 등록
+  useEffect(() => {
+    const unsubscribe = initializeAuth();
+    return () => unsubscribe();
+  }, [initializeAuth]);
 
   // 마우스가 화면 좌측 끝(0~30px)에 도달했을 때 감지
   useEffect(() => {
@@ -34,7 +42,7 @@ export default function App() {
         <div className="absolute top-0 left-0 w-3 h-full z-30" />
       )}
 
-      {/* 💡 슬라이드 애니메이션이 적용되는 사이드바 */}
+      {/* 💡 슬라이드 애니메이션이 적용되는 기존 사이드바 */}
       <div
         className={`absolute top-0 left-0 h-full z-20 transition-transform duration-300 ease-in-out ${
           showSidebar ? 'translate-x-0 shadow-2xl' : '-translate-x-full'
