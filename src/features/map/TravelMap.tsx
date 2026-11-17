@@ -3,7 +3,8 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useSettingsStore } from '../../store/useSettingsStore';
-import { LogIn, Loader2 } from 'lucide-react';
+import { LogIn } from 'lucide-react';
+import { LoadingOverlay } from '../../components/common/LoadingOverlay';
 
 export const TravelMap: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -125,12 +126,10 @@ export const TravelMap: React.FC = () => {
 
       {/* ⏳ 위치 찾는 중 로딩 오버레이 (최초 1회 진입 시에만 잠깐 노출) */}
       {isLocating && (
-        <div className="absolute inset-0 z-[1500] bg-slate-900/20 backdrop-blur-xs flex items-center justify-center pointer-events-none">
-          <div className="bg-white/90 backdrop-blur-md px-5 py-3.5 rounded-2xl shadow-xl border border-slate-200/80 flex items-center gap-3">
-            <Loader2 className={`w-5 h-5 animate-spin ${currentTheme.text}`} />
-            <span className="text-xs font-semibold text-slate-700">현재 위치를 찾는 중입니다...</span>
-          </div>
-        </div>
+        <LoadingOverlay
+          isLoading={isLocating}
+          message="현재 위치를 불러오는 중입니다..."
+        />
       )}
 
       {/* 🛑 로그인 안 했을 때 오버레이 */}

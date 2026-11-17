@@ -4,6 +4,7 @@ import { TravelMap } from './features/map/TravelMap';
 import { useSettingsStore } from './store/useSettingsStore';
 import { SettingsView } from './features/settings/SettingsView';
 import { useAuthStore } from './store/useAuthStore';
+import Profile from './features/profile/Profile';
 
 export default function App() {
   const { initializeAuth } = useAuthStore();
@@ -59,7 +60,8 @@ export default function App() {
       >
         {currentTab === 'map' && <TravelMap />}
         {currentTab === 'settings' && <SettingsView />}
-        {currentTab !== 'map' && currentTab !== 'settings' && (
+        {currentTab === 'profile' && <Profile />}
+        {currentTab !== 'map' && currentTab !== 'settings' && currentTab !== 'profile' &&(
           <div className="flex-1 flex items-center justify-center bg-white p-8">
             <h2 className="text-2xl font-bold text-slate-700">
               [준비중] {currentTab} 화면입니다.

@@ -19,9 +19,8 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) => {
   const { isSidebarPinned, toggleSidebarPin, themeColor } = useSettingsStore();
-  const { user, signInWithGoogle, signOut } = useAuthStore();
+  const { user, profile, signInWithGoogle, signOut } = useAuthStore(); // 💡 profile 추가
 
-  // 테마별 색상 매핑 (기존 UI 디자인 그대로 유지)
   const themeClasses: Record<string, { active: string; icon: string }> = {
     indigo: { active: 'bg-indigo-50 text-indigo-600', icon: 'text-indigo-600 bg-indigo-50' },
     emerald: { active: 'bg-emerald-50 text-emerald-600', icon: 'text-emerald-600 bg-emerald-50' },
@@ -31,7 +30,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
 
   const currentTheme = themeClasses[themeColor] || themeClasses.indigo;
 
-  // 전체 메뉴 아이템 리스트
   const allMenuItems = [
     { id: 'map', label: '여행 지도', icon: MapPin },
     { id: 'places', label: '장소 관리', icon: Folder },
@@ -40,14 +38,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
     { id: 'settings', label: '환경설정', icon: Settings },
   ];
 
-  // 💡 로그인 전에는 '여행 지도'만 표시, 로그인 후에는 전체 메뉴 표시
   const menuItems = user 
     ? allMenuItems 
     : allMenuItems.filter((item) => item.id === 'map');
 
   return (
     <aside className="w-64 h-full bg-white border-r border-slate-200/80 flex flex-col select-none relative z-20 shadow-sm">
-      {/* 1. 상단 타이틀 및 핀(Pin) 고정 버튼 영역 */}
       <div className="p-6 border-b border-slate-100 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-inner transition-colors ${currentTheme.icon}`}>
@@ -59,7 +55,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
           </div>
         </div>
 
-        {/* 핀 고정 버튼 */}
         <button
           onClick={toggleSidebarPin}
           className={`p-2 rounded-lg transition-colors cursor-pointer ${
@@ -73,7 +68,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
         </button>
       </div>
 
-      {/* 2. 네비게이션 메뉴 영역 */}
       <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
         {menuItems.map((item) => {
           const IconComponent = item.icon;
@@ -95,26 +89,26 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
         })}
       </nav>
 
-      {/* 3. 하단 로그인/로그아웃 영역 */}
       <div className="p-4 border-t border-slate-100 bg-slate-50/40">
         {user ? (
-          /* 로그인 후: 프로필 정보 및 로그아웃 버튼 */
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3 px-2 py-1">
+              {/* 💡 profiles 테이블의 avatar_url 우선 표시 */}
               <div className={`w-9 h-9 rounded-full flex items-center justify-center font-semibold text-sm overflow-hidden ring-1 ring-slate-200 shrink-0 ${currentTheme.icon}`}>
-                {user.user_metadata?.avatar_url ? (
+                {profile?.avatar_url || user.user_metadata?.avatar_url ? (
                   <img
-                    src={user.user_metadata.avatar_url}
+                    src={profile?.avatar_url || user.user_metadata?.avatar_url}
                     alt="프로필 아바타"
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  (user.email?.[0] || 'U').toUpperCase()
+                  (profile?.user_name?.[0] || user.email?.[0] || 'U').toUpperCase()
                 )}
               </div>
               <div className="flex-1 min-w-0">
+                {/* 💡 profiles 테이블의 user_name 우선 표시 */}
                 <p className="text-xs font-semibold text-slate-800 truncate">
-                  {user.user_metadata?.full_name || user.email}
+                  {profile?.user_name || user.user_metadata?.full_name || user.email}
                 </p>
                 <p className="text-[11px] text-slate-400 truncate">{user.email}</p>
               </div>
@@ -129,10 +123,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
             </button>
           </div>
         ) : (
-          /* 로그인 전: 로그인하기 버튼 */
           <button
             onClick={() => signInWithGoogle()}
-            className={`w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all shadow-xs cursor-pointer ${currentTheme.active} hover:brightness-95`}
+            className={`w-full flex items-center justify-center gap-2.5 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all shadow-xs cursor-pointer ${currentTheme.active} hover:brightness-95`}
           >
             <LogIn className="w-4 h-4 shrink-0" />
             로그인하기
