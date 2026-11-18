@@ -248,26 +248,47 @@ export const AddPlaceModal: React.FC<AddPlaceModalProps> = ({
           <div>
             <label className="mb-1 block text-xs font-semibold text-slate-700">별점</label>
             <div className="flex items-center gap-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  type="button"
-                  key={star}
-                  onClick={() => setRating(star)}
-                  onMouseEnter={() => setHoverRating(star)}
-                  onMouseLeave={() => setHoverRating(null)}
-                  className="p-0.5 transition-transform hover:scale-110 cursor-pointer"
-                >
-                  <Star
-                    className={`h-5 w-5 ${
-                      (hoverRating ?? rating) >= star
-                        ? 'fill-amber-400 text-amber-400'
-                        : 'text-slate-200'
-                    }`}
-                  />
-                </button>
-              ))}
+              {[1, 2, 3, 4, 5].map((star) => {
+                const currentVal = hoverRating ?? rating;
+                
+                // 각 별이 채워진 상태 판단 (0: 빈 별, 0.5: 반쪽, 1: 꽉 찬 별)
+                const fillStatus = currentVal >= star ? 1 : currentVal >= star - 0.5 ? 0.5 : 0;
+
+                return (
+                  <div key={star} className="relative p-0.5 flex items-center cursor-pointer">
+                    {/* 1. 배경 (빈 별) */}
+                    <Star className="h-5 w-5 text-slate-200" />
+
+                    {/* 2. 채워진 별 (0.5 또는 1.0에 따라 클리핑 처리) */}
+                    {fillStatus > 0 && (
+                      <div 
+                        className="absolute top-0.5 left-0.5 overflow-hidden pointer-events-none"
+                        style={{ width: fillStatus === 0.5 ? '50%' : '100%' }}
+                      >
+                        <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
+                      </div>
+                    )}
+
+                    {/* 3. 왼쪽 반 영역 (X.5점) 클릭 및 호버 */}
+                    <div
+                      className="absolute top-0 left-0 w-1/2 h-full z-10"
+                      onClick={() => setRating(star - 0.5)}
+                      onMouseEnter={() => setHoverRating(star - 0.5)}
+                      onMouseLeave={() => setHoverRating(null)}
+                    />
+
+                    {/* 4. 오른쪽 반 영역 (X.0점) 클릭 및 호버 */}
+                    <div
+                      className="absolute top-0 right-0 w-1/2 h-full z-10"
+                      onClick={() => setRating(star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(null)}
+                    />
+                  </div>
+                );
+              })}
               <span className="ml-2 text-xs font-semibold text-slate-600">
-                {rating} / 5점
+                {rating.toFixed(1)} / 5.0점
               </span>
             </div>
           </div>

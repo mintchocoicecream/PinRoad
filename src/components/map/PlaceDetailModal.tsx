@@ -30,6 +30,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
   const [cityInfo, setCityInfo] = useState('');
   const [address, setAddress] = useState('');
   const [rating, setRating] = useState(5);
+  const [hoverRating, setHoverRating] = useState<number | null>(null);
   const [review, setReview] = useState('');
 
   // 💡 사진 확대 보기 및 슬라이드를 위한 상태 (인덱스 관리)
@@ -149,21 +150,45 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
           <div>
             <label className="mb-1 block text-xs font-semibold text-slate-700">별점</label>
             <div className="flex items-center gap-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  type="button"
-                  key={star}
-                  disabled={!isEditing}
-                  onClick={() => setRating(star)}
-                  className={`p-0.5 ${isEditing ? 'hover:scale-110 cursor-pointer' : 'cursor-default'}`}
-                >
-                  <Star
-                    className={`h-5 w-5 ${
-                      rating >= star ? 'fill-amber-400 text-amber-400' : 'text-slate-200'
-                    }`}
+              {[1, 2, 3, 4, 5].map((star) => {
+                const currentVal = hoverRating ?? rating;
+                
+                // 각 별이 채워진 상태 판단 (0: 빈 별, 0.5: 반쪽, 1: 꽉 찬 별)
+                const fillStatus = currentVal >= star ? 1 : currentVal >= star - 0.5 ? 0.5 : 0;
+
+                return (
+                  <div key={star} className="relative p-0.5 flex items-center cursor-pointer">
+                  {/* 1. 배경 (빈 별) */}
+                  <Star className="h-5 w-5 text-slate-200" />
+
+                  {/* 2. 채워진 별 (0.5 또는 1.0에 따라 클리핑 처리) */}
+                  {fillStatus > 0 && (
+                    <div 
+                      className="absolute top-0.5 left-0.5 overflow-hidden pointer-events-none"
+                      style={{ width: fillStatus === 0.5 ? '50%' : '100%' }}
+                    >
+                      <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
+                    </div>
+                  )}
+
+                  {/* 3. 왼쪽 반 영역 (X.5점) 클릭 및 호버 */}
+                  <div
+                    className="absolute top-0 left-0 w-1/2 h-full z-10"
+                    onClick={() => isEditing && setRating(star - 0.5)}
+                    onMouseEnter={() => isEditing && setHoverRating(star - 0.5)}
+                    onMouseLeave={() => isEditing && setHoverRating(null)}
                   />
-                </button>
-              ))}
+
+                  {/* 4. 오른쪽 반 영역 (X.0점) 클릭 및 호버 */}
+                  <div
+                    className="absolute top-0 right-0 w-1/2 h-full z-10"
+                    onClick={() => isEditing && setRating(star)}
+                    onMouseEnter={() => isEditing && setHoverRating(star)}
+                    onMouseLeave={() => isEditing && setHoverRating(null)}
+                  />
+                </div>
+                )
+                })}
               <span className="ml-2 text-xs font-semibold text-slate-600">{rating} / 5점</span>
             </div>
           </div>
@@ -171,7 +196,7 @@ export const PlaceDetailModal: React.FC<PlaceDetailModalProps> = ({
           {/* 등록된 사진 목록 */}
           {place.image_urls && place.image_urls.length > 0 && (
             <div>
-              <label className="mb-1 block text-xs font-semibold text-slate-700">등록된 사진 (클릭하여 확대)</label>
+              <label className="mb-1 block text-xs font-semibold text-slate-700">등록된 사진</label>
               <div className="flex flex-wrap gap-2">
                 {place.image_urls.map((url, idx) => (
                   <div

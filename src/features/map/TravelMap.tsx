@@ -101,6 +101,7 @@ export const TravelMap: React.FC = () => {
     });
   };
 
+  
   const renderPlaceMarkers = (placeList: Place[], hexColor: string) => {
     if (!mapInstanceRef.current) return;
 
@@ -116,8 +117,24 @@ export const TravelMap: React.FC = () => {
       const customIcon = createCustomPlaceIcon(hexColor, place.rating);
       const marker = L.marker([place.lat, place.lng], { icon: customIcon });
 
-      const thumbnailHtml = place.image_urls?.[0]
-        ? `<img src="${place.image_urls[0]}" alt="thumbnail" class="w-full h-24 object-cover rounded-xl mb-1.5" />`
+      const images = place.image_urls ?? [];
+      const thumbnailUrl = images.length > 0 
+        ? (typeof images[0] === 'string' ? images[0] : null) 
+        : null;
+      const photoCount = images.length;
+
+      // 대표 사진과 우측 하단 사진 개수 배지(photoCount > 0 인 경우)를 포함하는 HTML
+      const thumbnailHtml = thumbnailUrl
+        ? `
+          <div class="relative w-full h-24 mb-2 overflow-hidden rounded-xl bg-slate-100">
+            <img src="${thumbnailUrl}" alt="thumbnail" class="w-full h-full object-cover" />
+            ${photoCount > 1 ? `
+              <span class="absolute bottom-1.5 right-1.5 flex items-center justify-center rounded-md bg-black/65 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white backdrop-blur-xs">
+                ${photoCount}
+              </span>
+            ` : ''}
+          </div>
+        `
         : '';
 
       const tooltipContent = `
