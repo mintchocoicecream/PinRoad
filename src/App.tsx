@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Sidebar } from './components/layout/Sidebar';
 import { TravelMap } from './features/map/TravelMap';
 import { useSettingsStore } from './store/useSettingsStore';
 import { SettingsView } from './features/settings/SettingsView';
+import { PlacesView } from './features/places/PlacesView';
 import { useAuthStore } from './store/useAuthStore';
 import Profile from './features/profile/Profile';
 
@@ -64,7 +65,8 @@ export default function App() {
         {currentTab === 'map' && <TravelMap />}
         {currentTab === 'settings' && <SettingsView />}
         {currentTab === 'profile' && <Profile />}
-        {currentTab !== 'map' && currentTab !== 'settings' && currentTab !== 'profile' &&(
+        {currentTab === 'places' && <PlacesView />}
+        {currentTab === 'friends' &&(
           <div className="flex-1 flex items-center justify-center bg-white p-8">
             <h2 className="text-2xl font-bold text-slate-700">
               [준비중] {currentTab} 화면입니다.

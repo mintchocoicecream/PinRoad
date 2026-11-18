@@ -31,6 +31,7 @@ export const TravelMap: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'my' | 'friends'>('my');
   const [isLocating, setIsLocating] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [currentCity, setCurrentCity] = useState<string | null>(null);
 
   const [clickedLoc, setClickedLoc] = useState<ClickedLocation | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,13 +61,14 @@ export const TravelMap: React.FC = () => {
       hex: string;
     }
   > = {
-    indigo: { activeBg: 'bg-indigo-600', text: 'text-indigo-600', buttonBg: 'bg-indigo-600', buttonHover: 'hover:bg-indigo-700', iconBg: 'bg-indigo-50 text-indigo-600', hex: '#4f46e5' },
-    emerald: { activeBg: 'bg-emerald-600', text: 'text-emerald-600', buttonBg: 'bg-emerald-600', buttonHover: 'hover:bg-emerald-700', iconBg: 'bg-emerald-50 text-emerald-600', hex: '#059669' },
-    amber: { activeBg: 'bg-amber-600', text: 'text-amber-600', buttonBg: 'bg-amber-600', buttonHover: 'hover:bg-amber-700', iconBg: 'bg-amber-50 text-amber-600', hex: '#d97706' },
-    rose: { activeBg: 'bg-rose-600', text: 'text-rose-600', buttonBg: 'bg-rose-600', buttonHover: 'hover:bg-rose-700', iconBg: 'bg-rose-50 text-rose-600', hex: '#e11d48' },
+    grape: { activeBg: 'bg-indigo-600', text: 'text-indigo-600', buttonBg: 'bg-indigo-600', buttonHover: 'hover:bg-indigo-700', iconBg: 'bg-indigo-50 text-indigo-600', hex: '#4f46e5' },
+    melon: { activeBg: 'bg-emerald-600', text: 'text-emerald-600', buttonBg: 'bg-emerald-600', buttonHover: 'hover:bg-emerald-700', iconBg: 'bg-emerald-50 text-emerald-600', hex: '#059669' },
+    banana: { activeBg: 'bg-yellow-500', text: 'text-yellow-500', buttonBg: 'bg-yellow-500', buttonHover: 'hover:bg-yellow-600', iconBg: 'bg-yellow-50 text-yellow-500', hex: '#e7d724' },
+    orange: { activeBg: 'bg-amber-600', text: 'text-amber-600', buttonBg: 'bg-amber-600', buttonHover: 'hover:bg-amber-700', iconBg: 'bg-amber-50 text-amber-600', hex: '#d97706' },
+    strawberry: { activeBg: 'bg-rose-600', text: 'text-rose-600', buttonBg: 'bg-rose-600', buttonHover: 'hover:bg-rose-700', iconBg: 'bg-rose-50 text-rose-600', hex: '#e11d48' },
   };
 
-  const currentTheme = themeMap[themeColor] || themeMap.indigo;
+  const currentTheme = themeMap[themeColor] || themeMap.grape;
 
   const createCustomPlaceIcon = (hexColor: string, rating: number) => {
     return L.divIcon({
@@ -319,13 +321,12 @@ export const TravelMap: React.FC = () => {
           setIsLocating(false);
           
           if (mapInstanceRef.current) {
-            mapInstanceRef.current.setView([latitude, longitude], 5);
+            mapInstanceRef.current.setView([latitude, longitude], 10);
 
             if (markerRef.current) {
               markerRef.current.remove();
             }
 
-            let regionName = '내 위치';
             try {
               const response = await fetch(
                 `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&accept-language=ko`
@@ -334,15 +335,16 @@ export const TravelMap: React.FC = () => {
               if (data && data.address) {
                 const city = data.address.city || data.address.town || data.address.county || data.address.municipality || '';
                 const country = data.address.country || '';
-                regionName = `📍${country} ${city}`.trim() || '📍내 위치';
+                setCurrentCity(`📍${country} ${city}`);
               }
             } catch (err) {
               console.error('지역명 조회 실패:', err);
             }
-
+            /*
             const newMarker = L.marker([latitude, longitude]).addTo(mapInstanceRef.current);
             newMarker.bindPopup(`<b>${regionName}</b>`).openPopup();
             markerRef.current = newMarker;
+            */
           }
         },
         (error) => {
@@ -485,6 +487,12 @@ export const TravelMap: React.FC = () => {
         themeColorClass={`${currentTheme.buttonBg} ${currentTheme.buttonHover}`}
         onClose={() => setAlertModal({ isOpen: false, message: '' })}
       />
+    {currentCity!==null && 
+      <div className="absolute bottom-4 left-4 z-[1000] pointer-events-none flex items-center gap-1.5 rounded-lg bg-white/85 px-3 py-1.5 shadow-md backdrop-blur-md border border-slate-200/60 text-slate-700 text-xs font-medium">
+        <span>{currentCity}</span>
+      </div>
+    }
+    
     </div>
   );
 };

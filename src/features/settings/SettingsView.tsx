@@ -8,10 +8,11 @@ export const SettingsView: React.FC = () => {
   const { themeColor, setThemeColor, isMapShared, toggleMapShare } = useSettingsStore();
 
   const themes: { id: ThemeColor; label: string; bgClass: string }[] = [
-    { id: 'indigo', label: '인디고', bgClass: 'bg-indigo-600' },
-    { id: 'emerald', label: '에메랄드', bgClass: 'bg-emerald-600' },
-    { id: 'amber', label: '앰버', bgClass: 'bg-amber-600' },
-    { id: 'rose', label: '로즈', bgClass: 'bg-rose-600' },
+    { id: 'grape', label: '포도', bgClass: 'bg-indigo-600' },
+    { id: 'melon', label: '멜론', bgClass: 'bg-emerald-600' },
+    { id: 'banana', label: '바나나', bgClass: 'bg-yellow-500' },
+    { id: 'orange', label: '오렌지', bgClass: 'bg-orange-600' },
+    { id: 'strawberry', label: '딸기', bgClass: 'bg-rose-600' },
   ];
 
   return (

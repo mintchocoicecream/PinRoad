@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { supabase } from '../lib/supabase';
 
-export type ThemeColor = 'indigo' | 'emerald' | 'amber' | 'rose';
+export type ThemeColor = 'grape' | 'melon' | 'banana' | 'orange' | 'strawberry';
 
 interface SettingsState {
   themeColor: ThemeColor;
@@ -17,15 +17,16 @@ interface SettingsState {
 }
 
 const themeMap: Record<ThemeColor, { primary: string; hover: string }> = {
-  indigo: { primary: '#4f46e5', hover: '#4338ca' },
-  emerald: { primary: '#059669', hover: '#047857' },
-  amber: { primary: '#d97706', hover: '#b45309' },
-  rose: { primary: '#e11d48', hover: '#be123c' },
+  grape: { primary: '#4f46e5', hover: '#4338ca' },
+  melon: { primary: '#059669', hover: '#047857' },
+  banana: { primary: '#e7d724', hover: '#dbc818' },
+  orange: { primary: '#d97706', hover: '#b45309' },
+  strawberry: { primary: '#e11d48', hover: '#be123c' },
 };
 
 // 💡 DOM에 직접 CSS 변수를 주입하는 헬퍼 함수
 const applyThemeToDOM = (color: ThemeColor) => {
-  const selected = themeMap[color] || themeMap.indigo;
+  const selected = themeMap[color] || themeMap.grape;
   if (typeof window !== 'undefined') {
     document.documentElement.style.setProperty('--theme-primary', selected.primary);
     document.documentElement.style.setProperty('--theme-primary-hover', selected.hover);
@@ -40,7 +41,7 @@ const getStoredSidebarPin = (): boolean => {
 };
 
 export const useSettingsStore = create<SettingsState>((set, get) => ({
-  themeColor: 'indigo',
+  themeColor: 'grape',
   isMapShared: false,
   isSidebarPinned: getStoredSidebarPin(),
 

@@ -22,13 +22,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
   const { user, profile, signInWithGoogle, signOut } = useAuthStore(); // 💡 profile 추가
 
   const themeClasses: Record<string, { active: string; icon: string }> = {
-    indigo: { active: 'bg-indigo-50 text-indigo-600', icon: 'text-indigo-600 bg-indigo-50' },
-    emerald: { active: 'bg-emerald-50 text-emerald-600', icon: 'text-emerald-600 bg-emerald-50' },
-    amber: { active: 'bg-amber-50 text-amber-600', icon: 'text-amber-600 bg-amber-50' },
-    rose: { active: 'bg-rose-50 text-rose-600', icon: 'text-rose-600 bg-rose-50' },
+    grape: { active: 'bg-indigo-50 text-indigo-600', icon: 'text-indigo-600 bg-indigo-50' },
+    melon: { active: 'bg-emerald-50 text-emerald-600', icon: 'text-emerald-600 bg-emerald-50' },
+    banana: { active: 'bg-yellow-50 text-yellow-600', icon: 'text-yellow-600 bg-yellow-50' },
+    orange: { active: 'bg-amber-50 text-amber-600', icon: 'text-amber-600 bg-amber-50' },
+    strawberry: { active: 'bg-rose-50 text-rose-600', icon: 'text-rose-600 bg-rose-50' },
   };
 
-  const currentTheme = themeClasses[themeColor] || themeClasses.indigo;
+  const currentTheme = themeClasses[themeColor] || themeClasses.grape;
 
   const allMenuItems = [
     { id: 'map', label: '여행 지도', icon: MapPin },
