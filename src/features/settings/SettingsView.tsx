@@ -1,12 +1,14 @@
 import React from 'react';
 import { useSettingsStore, type ThemeColor } from '../../store/useSettingsStore';
 import { Palette, Globe, Check } from 'lucide-react';
+import { useAuthStore } from '../../store/useAuthStore';
 
 export const SettingsView: React.FC = () => {
+  const { user } = useAuthStore();
   const { themeColor, setThemeColor, isMapShared, toggleMapShare } = useSettingsStore();
 
   const themes: { id: ThemeColor; label: string; bgClass: string }[] = [
-    { id: 'indigo', label: '인디고 (기본)', bgClass: 'bg-indigo-600' },
+    { id: 'indigo', label: '인디고', bgClass: 'bg-indigo-600' },
     { id: 'emerald', label: '에메랄드', bgClass: 'bg-emerald-600' },
     { id: 'amber', label: '앰버', bgClass: 'bg-amber-600' },
     { id: 'rose', label: '로즈', bgClass: 'bg-rose-600' },
@@ -40,7 +42,7 @@ export const SettingsView: React.FC = () => {
                 return (
                   <button
                     key={t.id}
-                    onClick={() => setThemeColor(t.id)}
+                    onClick={() => setThemeColor(t.id, user?.id)}
                     className={`flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all ${
                       isSelected
                         ? 'border-primary bg-primary/5 shadow-xs'
@@ -77,9 +79,9 @@ export const SettingsView: React.FC = () => {
                 </span>
               </div>
 
-              {/* 스위치 토글 버튼 */}
+              {/* 스위치 토글 버튼 */} 
               <button
-                onClick={toggleMapShare}
+                onClick={() => toggleMapShare(user?.id)}
                 className={`relative inline-flex h-7 w-14 items-center rounded-full cursor-pointer transition-colors duration-300 focus:outline-hidden ${
                   isMapShared ? 'bg-primary' : 'bg-slate-300'
                 }`}

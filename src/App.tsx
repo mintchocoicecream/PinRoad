@@ -7,16 +7,19 @@ import { useAuthStore } from './store/useAuthStore';
 import Profile from './features/profile/Profile';
 
 export default function App() {
-  const { initializeAuth } = useAuthStore();
+  const { user, initializeAuth } = useAuthStore();
   const [currentTab, setCurrentTab] = useState('map');
-  const { isSidebarPinned } = useSettingsStore();
+  const { isSidebarPinned, initializeSettings } = useSettingsStore();
   const [isHovered, setIsHovered] = useState(false);
 
   // 💡 앱 마운트 시 Supabase 인증 상태 초기화 및 세션 감지 리스너 등록
   useEffect(() => {
+    if(user?.id) {
+      initializeSettings(user.id);
+    }
     const unsubscribe = initializeAuth();
     return () => unsubscribe();
-  }, [initializeAuth]);
+  }, [user?.id, initializeSettings, initializeAuth]);
 
   // 마우스가 화면 좌측 끝(0~30px)에 도달했을 때 감지
   useEffect(() => {

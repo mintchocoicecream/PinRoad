@@ -115,7 +115,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
             </div>
 
             <button
-              onClick={() => signOut()}
+              onClick={async () => {
+                await signOut();
+                setCurrentTab('map'); // 💡 로그아웃 시 무조건 여행 지도(메인) 탭으로 강제 이동
+              }}
               className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-slate-200/80 bg-white text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition shadow-xs cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5 text-slate-400" />
